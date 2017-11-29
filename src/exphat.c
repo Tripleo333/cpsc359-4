@@ -24,13 +24,15 @@ unsigned char i2c_read_byte_data(unsigned char dev_addr, unsigned char reg_addr)
 		usleep(1000);
 	}
 	return bsc1[I2C_FIFO];
+	return 0;
 }
 
-// TODO: IMPLEMENT THIS
 unsigned short i2c_read_word_data(unsigned char dev_addr, unsigned char reg_addr) {
 	int timeout = 0;
+	unsigned short ret = 0;
+	unsigned char fifo_val = 0;
 	bsc1[I2C_ADDR] = dev_addr;
-	bsc1[I2C_DLEN] = DLEN_WORD;
+	bsc1[I2C_DLEN] = DLEN_BYTE;
 	bsc1[I2C_FIFO] = reg_addr;
 	bsc1[I2C_STATUS] = (1 << 9) | (1 << 8) | (1 << 1); // clear CLKT, ERR, DONE
 	bsc1[I2C_C] = (1 << 15) | (1 << 7); // I2CEN, ST
@@ -39,15 +41,23 @@ unsigned short i2c_read_word_data(unsigned char dev_addr, unsigned char reg_addr
 		usleep(1000);
 	}
 	// get the response from the register
-	bsc1[I2C_DLEN] = DLEN_BYTE;
+	bsc1[I2C_DLEN] =  DLEN_WORD ;
 	bsc1[I2C_STATUS] = (1 << 9) | (1 << 8) | (1 << 1);  // clear CLKT, ERR, DONE
 	bsc1[I2C_C] = (1 << 15) | (1 << 7) | (1 << 4) | 1; // I2CEN, ST, CLEAR, READ
 	// wait till done
 	while( (!(bsc1[I2C_STATUS] & 0x02)) && (timeout < I2C_TIMEOUT)  ) {   // 0x02 masks DONE bit
 		usleep(1000);
 	}
-	printf("TODO: IMPLEMENT i2c_read_word_data");
-	return 0;
+	// read first 8 bits from FIFO
+	fifo_val = bsc1[I2C_FIFO];
+	// load into lower half of ret
+	ret |= fifo_val;
+	// shift lower byte into upper byte of ret
+	ret <<= 8;
+	fifo_val = bsc1[I2C_FIFO];
+	// load lower byte of ret with fifo_val
+	ret |= fifo_val;
+	return ret;
 }
 
 // TODO: IMPLEMENT THIS
@@ -77,7 +87,8 @@ int  main() {
 	if (!my_init()) return -1;
 	// printf("uc:%d us:%d\n",sizeof(unsigned char),sizeof(unsigned short));
 	
-	printf("dev_id: 0x%02x\n", i2c_read_byte_data(0x53, 0x00));
+	//printf("dev_id: 0x%02x\n", i2c_read_byte_data(0x53, 0x00));
+	printf("0x%04x: \n", i2c_read_word_data(0x53, 0x00));
 	
 	my_uninit();
 	return 0;

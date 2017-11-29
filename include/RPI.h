@@ -45,9 +45,9 @@
 #define GPIO_CLR *(gpio + GPCLR0)
 #define	GPIO_READ(g) *(gpio + GPLEV0) &= (1<<(g))
 
-static unsigned int *gpio;
-static unsigned int *bsc1;
-static int fd;
+unsigned int *gpio;
+unsigned int *bsc1;
+int fd;
 
 int my_init();
 void my_uninit();
