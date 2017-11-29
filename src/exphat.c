@@ -30,7 +30,7 @@ unsigned char i2c_read_byte_data(unsigned char dev_addr, unsigned char reg_addr)
 unsigned short i2c_read_word_data(unsigned char dev_addr, unsigned char reg_addr) {
 	int timeout = 0;
 	bsc1[I2C_ADDR] = dev_addr;
-	bsc1[I2C_DLEN] = DLEN_BYTE;
+	bsc1[I2C_DLEN] = DLEN_WORD;
 	bsc1[I2C_FIFO] = reg_addr;
 	bsc1[I2C_STATUS] = (1 << 9) | (1 << 8) | (1 << 1); // clear CLKT, ERR, DONE
 	bsc1[I2C_C] = (1 << 15) | (1 << 7); // I2CEN, ST
@@ -76,10 +76,6 @@ void i2c_write_byte_data(unsigned char dev_addr, unsigned char reg_addr, unsigne
 int  main() {
 	if (!my_init()) return -1;
 	// printf("uc:%d us:%d\n",sizeof(unsigned char),sizeof(unsigned short));
-	INP_GPIO(SDA1);
-	INP_GPIO(SCL1);
-	SET_GPIO_ALT(SDA1, 0);
-	SET_GPIO_ALT(SCL1, 0);
 	
 	printf("dev_id: 0x%02x\n", i2c_read_byte_data(0x53, 0x00));
 	
