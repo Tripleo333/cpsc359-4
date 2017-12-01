@@ -15,6 +15,7 @@ unsigned char i2c_read_byte_data(unsigned char dev_addr, unsigned char reg_addr)
 	while( (!(bsc1[I2C_STATUS] & 0x02)) && (timeout < I2C_TIMEOUT) ) {   // 0x02 masks DONE bit
 		usleep(1000);
 	}
+	usleep(50);
 	// get the response from the register
 	bsc1[I2C_DLEN] = DLEN_BYTE;
 	bsc1[I2C_STATUS] = (1 << 9) | (1 << 8) | (1 << 1);  // clear CLKT, ERR, DONE
@@ -23,6 +24,7 @@ unsigned char i2c_read_byte_data(unsigned char dev_addr, unsigned char reg_addr)
 	while( (!(bsc1[I2C_STATUS] & 0x02)) && (timeout < I2C_TIMEOUT)  ) {   // 0x02 masks DONE bit
 		usleep(1000);
 	}
+	usleep(50);
 	return bsc1[I2C_FIFO];
 	return 0;
 }
@@ -40,6 +42,7 @@ unsigned short i2c_read_word_data(unsigned char dev_addr, unsigned char reg_addr
 	while( (!(bsc1[I2C_STATUS] & 0x02)) && (timeout < I2C_TIMEOUT) ) {   // 0x02 masks DONE bit
 		usleep(1000);
 	}
+	usleep(50);
 	// get the response from the register
 	bsc1[I2C_DLEN] =  DLEN_WORD ;
 	bsc1[I2C_STATUS] = (1 << 9) | (1 << 8) | (1 << 1);  // clear CLKT, ERR, DONE
@@ -48,6 +51,7 @@ unsigned short i2c_read_word_data(unsigned char dev_addr, unsigned char reg_addr
 	while( (!(bsc1[I2C_STATUS] & 0x02)) && (timeout < I2C_TIMEOUT)  ) {   // 0x02 masks DONE bit
 		usleep(1000);
 	}
+	usleep(50);
 	// TODO: probably change the order of the writes to ret of fifo_val
 	// read first 8 bits from FIFO
 	fifo_val = bsc1[I2C_FIFO];
@@ -75,6 +79,7 @@ void i2c_write_byte_data(unsigned char dev_addr, unsigned char reg_addr, unsigne
 	while( (!(bsc1[I2C_STATUS] & 0x02)) && (timeout < I2C_TIMEOUT) ) {   // 0x02 masks DONE bit
 		usleep(1000);
 	}
+	usleep(50);
 }
 
 int  main() {

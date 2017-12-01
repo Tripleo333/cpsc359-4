@@ -8,4 +8,4 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 
 file(GLOB SOURCES include/*.h src/*.c)
 
-add_executable("prog_${PROJ_NAME}" ${SOURCES})
+add_executable("${PROJ_NAME}" ${SOURCES})
